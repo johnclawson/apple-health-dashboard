@@ -90,7 +90,7 @@ def enrich_with_gpx(workouts):
 
     enrich_workouts_with_elevation(workouts, gpx_dir)
 
-    workouts_with_elevation = len([w for w in workouts if w.elevation_gain_m is not None])
+    workouts_with_elevation = len([w for w in workouts if w.elevation_gain_ft is not None])
     logger.info(f"Added elevation data to {workouts_with_elevation} workouts")
 
 
@@ -218,13 +218,13 @@ def print_summary(overall_stats, output_file):
     print("Apple Health Cycling Dashboard - Summary")
     print("=" * 60)
     print(f"\nTotal Rides: {overall_stats['total_workouts']}")
-    print(f"Total Distance: {overall_stats['total_distance_km']:.1f} km")
+    print(f"Total Distance: {overall_stats['total_distance_miles']:.1f} mi")
     print(f"Total Time: {overall_stats['total_duration_hours']:.1f} hours")
-    print(f"Total Elevation Gain: {overall_stats['total_elevation_gain_m']:.0f} m")
+    print(f"Total Elevation Gain: {overall_stats['total_elevation_gain_ft']:.0f} ft")
     print(f"Total Calories: {overall_stats['total_calories']:.0f} kcal")
-    print(f"\nAverage Distance: {overall_stats['avg_distance_km']:.1f} km")
+    print(f"\nAverage Distance: {overall_stats['avg_distance_miles']:.1f} mi")
     print(f"Average Duration: {overall_stats['avg_duration_minutes']:.1f} min")
-    print(f"Average Speed: {overall_stats['avg_speed_kmh']:.1f} km/h")
+    print(f"Average Speed: {overall_stats['avg_speed_mph']:.1f} mph")
     print(f"\nYears Active: {overall_stats['years_active']}")
     print(f"First Ride: {overall_stats['first_ride_date']}")
     print(f"Last Ride: {overall_stats['last_ride_date']}")

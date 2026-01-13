@@ -12,16 +12,16 @@ class Workout:
     start_date: datetime
     end_date: datetime
     duration_minutes: float
-    distance_km: float
+    distance_miles: float
     calories: float
     source_name: str
     workout_type: str = "Cycling"
 
     # Optional fields populated later
     gpx_file: Optional[str] = None
-    elevation_gain_m: Optional[float] = None
-    elevation_loss_m: Optional[float] = None
-    max_elevation_m: Optional[float] = None
+    elevation_gain_ft: Optional[float] = None
+    elevation_loss_ft: Optional[float] = None
+    max_elevation_ft: Optional[float] = None
 
     # Heart rate data
     avg_heart_rate: Optional[float] = None
@@ -30,8 +30,8 @@ class Workout:
 
     def __post_init__(self):
         """Validate and calculate derived fields."""
-        if self.distance_km < 0:
-            self.distance_km = 0
+        if self.distance_miles < 0:
+            self.distance_miles = 0
         if self.duration_minutes < 0:
             self.duration_minutes = 0
 
@@ -41,17 +41,17 @@ class Workout:
         return self.duration_minutes / 60.0
 
     @property
-    def avg_speed_kmh(self) -> float:
-        """Calculate average speed in km/h."""
+    def avg_speed_mph(self) -> float:
+        """Calculate average speed in mph."""
         if self.duration_hours > 0:
-            return self.distance_km / self.duration_hours
+            return self.distance_miles / self.duration_hours
         return 0
 
     @property
-    def calories_per_km(self) -> float:
-        """Calculate calories burned per kilometer."""
-        if self.distance_km > 0:
-            return self.calories / self.distance_km
+    def calories_per_mile(self) -> float:
+        """Calculate calories burned per mile."""
+        if self.distance_miles > 0:
+            return self.calories / self.distance_miles
         return 0
 
     @property
@@ -104,20 +104,20 @@ class WorkoutSummary:
     """Summary statistics for a group of workouts."""
 
     total_workouts: int = 0
-    total_distance_km: float = 0
+    total_distance_miles: float = 0
     total_duration_minutes: float = 0
     total_calories: float = 0
-    total_elevation_gain_m: float = 0
+    total_elevation_gain_ft: float = 0
 
-    avg_distance_km: float = 0
+    avg_distance_miles: float = 0
     avg_duration_minutes: float = 0
-    avg_speed_kmh: float = 0
+    avg_speed_mph: float = 0
     avg_calories: float = 0
-    avg_elevation_gain_m: float = 0
+    avg_elevation_gain_ft: float = 0
 
-    max_distance_km: float = 0
+    max_distance_miles: float = 0
     max_duration_minutes: float = 0
-    max_elevation_gain_m: float = 0
+    max_elevation_gain_ft: float = 0
 
     workouts: List[Workout] = field(default_factory=list)
 
@@ -127,35 +127,35 @@ class WorkoutSummary:
             return
 
         self.total_workouts = len(self.workouts)
-        self.total_distance_km = sum(w.distance_km for w in self.workouts)
+        self.total_distance_miles = sum(w.distance_miles for w in self.workouts)
         self.total_duration_minutes = sum(w.duration_minutes for w in self.workouts)
         self.total_calories = sum(w.calories for w in self.workouts)
-        self.total_elevation_gain_m = sum(
-            w.elevation_gain_m for w in self.workouts if w.elevation_gain_m is not None
+        self.total_elevation_gain_ft = sum(
+            w.elevation_gain_ft for w in self.workouts if w.elevation_gain_ft is not None
         )
 
         if self.total_workouts > 0:
-            self.avg_distance_km = self.total_distance_km / self.total_workouts
+            self.avg_distance_miles = self.total_distance_miles / self.total_workouts
             self.avg_duration_minutes = self.total_duration_minutes / self.total_workouts
             self.avg_calories = self.total_calories / self.total_workouts
 
             workouts_with_elevation = [
-                w for w in self.workouts if w.elevation_gain_m is not None
+                w for w in self.workouts if w.elevation_gain_ft is not None
             ]
             if workouts_with_elevation:
-                self.avg_elevation_gain_m = sum(
-                    w.elevation_gain_m for w in workouts_with_elevation
+                self.avg_elevation_gain_ft = sum(
+                    w.elevation_gain_ft for w in workouts_with_elevation
                 ) / len(workouts_with_elevation)
 
         total_hours = self.total_duration_minutes / 60.0
         if total_hours > 0:
-            self.avg_speed_kmh = self.total_distance_km / total_hours
+            self.avg_speed_mph = self.total_distance_miles / total_hours
 
         if self.workouts:
-            self.max_distance_km = max(w.distance_km for w in self.workouts)
+            self.max_distance_miles = max(w.distance_miles for w in self.workouts)
             self.max_duration_minutes = max(w.duration_minutes for w in self.workouts)
             elevation_gains = [
-                w.elevation_gain_m for w in self.workouts if w.elevation_gain_m is not None
+                w.elevation_gain_ft for w in self.workouts if w.elevation_gain_ft is not None
             ]
             if elevation_gains:
-                self.max_elevation_gain_m = max(elevation_gains)
+                self.max_elevation_gain_ft = max(elevation_gains)

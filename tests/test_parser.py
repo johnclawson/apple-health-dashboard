@@ -54,7 +54,7 @@ class TestExtractWorkouts:
              duration="15.5"
              durationUnit="min"
              totalDistance="5.2"
-             distanceUnit="km"
+             distanceUnit="mi"
              totalEnergyBurned="250"
              sourceName="Apple Watch"
              startDate="2025-01-11 10:00:00 -0800"
@@ -64,7 +64,7 @@ class TestExtractWorkouts:
              duration="30.0"
              durationUnit="min"
              totalDistance="5.0"
-             distanceUnit="km"
+             distanceUnit="mi"
              sourceName="Apple Watch"
              startDate="2025-01-11 11:00:00 -0800"
              endDate="2025-01-11 11:30:00 -0800">
@@ -72,8 +72,8 @@ class TestExtractWorkouts:
     <Workout workoutActivityType="HKWorkoutActivityTypeCycling"
              duration="45.2"
              durationUnit="min"
-             totalDistance="12.5"
-             distanceUnit="mi"
+             totalDistance="20.0"
+             distanceUnit="km"
              totalEnergyBurned="500"
              sourceName="iPhone"
              startDate="2025-01-12 14:00:00 -0800"
@@ -106,20 +106,20 @@ class TestExtractWorkouts:
         # Check first workout
         w1 = workouts[0]
         assert w1.duration_minutes == 15.5
-        assert w1.distance_km == 5.2
+        assert w1.distance_miles == 5.2
         assert w1.calories == 250
         assert w1.source_name == "Apple Watch"
         assert w1.start_date == datetime(2025, 1, 11, 10, 0, 0)
 
-    def test_miles_to_km_conversion(self, sample_xml_file):
-        """Test that miles are converted to kilometers."""
+    def test_km_to_miles_conversion(self, sample_xml_file):
+        """Test that kilometers are converted to miles."""
         workout_types = ["HKWorkoutActivityTypeCycling"]
         workouts = extract_workouts(sample_xml_file, workout_types)
 
-        # Second workout has distance in miles
+        # Second workout has distance in km, should be converted to miles
         w2 = workouts[1]
-        expected_km = 12.5 * 1.60934
-        assert abs(w2.distance_km - expected_km) < 0.01
+        expected_miles = 20.0 / 1.60934
+        assert abs(w2.distance_miles - expected_miles) < 0.01
 
     def test_exclude_non_cycling_workouts(self, sample_xml_file):
         """Test that non-cycling workouts are excluded."""
@@ -234,7 +234,7 @@ class TestMatchHeartRateToWorkouts:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=5.0,
+            distance_miles=5.0,
             calories=250,
             source_name="Apple Watch"
         )
@@ -258,7 +258,7 @@ class TestMatchHeartRateToWorkouts:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=5.0,
+            distance_miles=5.0,
             calories=250,
             source_name="Apple Watch"
         )
@@ -283,7 +283,7 @@ class TestCalculateHrZoneTime:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=5.0,
+            distance_miles=5.0,
             calories=250,
             source_name="Apple Watch"
         )
@@ -313,7 +313,7 @@ class TestCalculateHrZoneTime:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=5.0,
+            distance_miles=5.0,
             calories=250,
             source_name="Apple Watch"
         )
@@ -339,19 +339,19 @@ class TestExtractDistanceAndCalories:
 <HealthData>
     <Record type="HKQuantityTypeIdentifierDistanceCycling"
             value="1.5"
-            unit="km"
+            unit="mi"
             startDate="2025-01-11 10:05:00 -0800"
             endDate="2025-01-11 10:05:00 -0800">
     </Record>
     <Record type="HKQuantityTypeIdentifierDistanceCycling"
             value="2.3"
-            unit="km"
+            unit="mi"
             startDate="2025-01-11 10:10:00 -0800"
             endDate="2025-01-11 10:10:00 -0800">
     </Record>
     <Record type="HKQuantityTypeIdentifierDistanceCycling"
-            value="1.0"
-            unit="mi"
+            value="3.0"
+            unit="km"
             startDate="2025-01-11 10:15:00 -0800"
             endDate="2025-01-11 10:15:00 -0800">
     </Record>
@@ -392,20 +392,20 @@ class TestExtractDistanceAndCalories:
         assert len(calorie_records) == 2
 
     def test_distance_unit_conversion(self, sample_distance_calories_xml):
-        """Test that miles are converted to km."""
+        """Test that km are converted to miles."""
         distance_records, _ = extract_distance_and_calories(
             sample_distance_calories_xml
         )
 
-        # Find the record that was in miles
-        mile_record = None
+        # Find the record that was in km
+        km_record = None
         for timestamp, distance in distance_records.items():
             if timestamp == datetime(2025, 1, 11, 10, 15, 0):
-                mile_record = distance
+                km_record = distance
                 break
 
-        expected_km = 1.0 * 1.60934
-        assert abs(mile_record - expected_km) < 0.01
+        expected_miles = 3.0 / 1.60934
+        assert abs(km_record - expected_miles) < 0.01
 
     def test_calorie_values(self, sample_distance_calories_xml):
         """Test calorie values are extracted correctly."""
@@ -426,7 +426,7 @@ class TestEnrichWorkoutsWithDistanceCalories:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=0,
+            distance_miles=0,
             calories=0,
             source_name="Apple Watch"
         )
@@ -449,7 +449,7 @@ class TestEnrichWorkoutsWithDistanceCalories:
             [workout], distance_records, calorie_records
         )
 
-        assert workout.distance_km == 5.0  # 1.5 + 2.3 + 1.2
+        assert workout.distance_miles == 5.0  # 1.5 + 2.3 + 1.2
         assert workout.calories == 185  # 50 + 75 + 60
 
     def test_no_matching_records(self):
@@ -458,7 +458,7 @@ class TestEnrichWorkoutsWithDistanceCalories:
             start_date=datetime(2025, 1, 11, 10, 0, 0),
             end_date=datetime(2025, 1, 11, 10, 30, 0),
             duration_minutes=30,
-            distance_km=0,
+            distance_miles=0,
             calories=0,
             source_name="Apple Watch"
         )
@@ -476,5 +476,5 @@ class TestEnrichWorkoutsWithDistanceCalories:
         )
 
         # Should remain 0 since no records match
-        assert workout.distance_km == 0
+        assert workout.distance_miles == 0
         assert workout.calories == 0

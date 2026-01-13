@@ -96,17 +96,17 @@ def calculate_hr_zones(
 
 def get_top_workouts(
     workouts: List[Workout],
-    metric: str = "elevation_gain_m",
+    metric: str = "elevation_gain_ft",
     top_n: int = 10
 ) -> List[Workout]:
     """
     Get top N workouts by a specific metric.
 
-    metric: One of 'distance_km', 'duration_minutes', 'elevation_gain_m', 'calories'
+    metric: One of 'distance_miles', 'duration_minutes', 'elevation_gain_ft', 'calories'
     """
     # Filter out workouts without the metric
-    if metric == "elevation_gain_m":
-        filtered = [w for w in workouts if w.elevation_gain_m is not None]
+    if metric == "elevation_gain_ft":
+        filtered = [w for w in workouts if w.elevation_gain_ft is not None]
     else:
         filtered = workouts
 
@@ -126,7 +126,7 @@ def calculate_monthly_trends(
     """
     Convert monthly summaries to a list suitable for charts/tables.
 
-    Returns list of dicts with keys: year, month, total_distance_km, total_workouts, etc.
+    Returns list of dicts with keys: year, month, total_distance_miles, total_workouts, etc.
     """
     trends = []
 
@@ -136,13 +136,13 @@ def calculate_monthly_trends(
             'month': month,
             'month_name': f"{year}-{month:02d}",
             'total_workouts': summary.total_workouts,
-            'total_distance_km': summary.total_distance_km,
+            'total_distance_miles': summary.total_distance_miles,
             'total_duration_hours': summary.total_duration_minutes / 60.0,
             'total_calories': summary.total_calories,
-            'total_elevation_gain_m': summary.total_elevation_gain_m,
-            'avg_distance_km': summary.avg_distance_km,
+            'total_elevation_gain_ft': summary.total_elevation_gain_ft,
+            'avg_distance_miles': summary.avg_distance_miles,
             'avg_duration_minutes': summary.avg_duration_minutes,
-            'avg_speed_kmh': summary.avg_speed_kmh
+            'avg_speed_mph': summary.avg_speed_mph
         })
 
     return trends
@@ -154,7 +154,7 @@ def calculate_yearly_trends(
     """
     Convert yearly summaries to a list suitable for charts/tables.
 
-    Returns list of dicts with keys: year, total_distance_km, total_workouts, etc.
+    Returns list of dicts with keys: year, total_distance_miles, total_workouts, etc.
     """
     trends = []
 
@@ -162,16 +162,16 @@ def calculate_yearly_trends(
         trends.append({
             'year': year,
             'total_workouts': summary.total_workouts,
-            'total_distance_km': summary.total_distance_km,
+            'total_distance_miles': summary.total_distance_miles,
             'total_duration_hours': summary.total_duration_minutes / 60.0,
             'total_calories': summary.total_calories,
-            'total_elevation_gain_m': summary.total_elevation_gain_m,
-            'avg_distance_km': summary.avg_distance_km,
+            'total_elevation_gain_ft': summary.total_elevation_gain_ft,
+            'avg_distance_miles': summary.avg_distance_miles,
             'avg_duration_minutes': summary.avg_duration_minutes,
-            'avg_speed_kmh': summary.avg_speed_kmh,
-            'avg_elevation_gain_m': summary.avg_elevation_gain_m,
-            'max_distance_km': summary.max_distance_km,
-            'max_elevation_gain_m': summary.max_elevation_gain_m
+            'avg_speed_mph': summary.avg_speed_mph,
+            'avg_elevation_gain_ft': summary.avg_elevation_gain_ft,
+            'max_distance_miles': summary.max_distance_miles,
+            'max_elevation_gain_ft': summary.max_elevation_gain_ft
         })
 
     return trends
@@ -199,21 +199,21 @@ def calculate_overall_stats(workouts: List[Workout]) -> Dict:
 
     return {
         'total_workouts': summary.total_workouts,
-        'total_distance_km': summary.total_distance_km,
+        'total_distance_miles': summary.total_distance_miles,
         'total_duration_hours': summary.total_duration_minutes / 60.0,
         'total_calories': summary.total_calories,
-        'total_elevation_gain_m': summary.total_elevation_gain_m,
-        'avg_distance_km': summary.avg_distance_km,
+        'total_elevation_gain_ft': summary.total_elevation_gain_ft,
+        'avg_distance_miles': summary.avg_distance_miles,
         'avg_duration_minutes': summary.avg_duration_minutes,
-        'avg_speed_kmh': summary.avg_speed_kmh,
-        'avg_elevation_gain_m': summary.avg_elevation_gain_m,
-        'max_distance_km': summary.max_distance_km,
+        'avg_speed_mph': summary.avg_speed_mph,
+        'avg_elevation_gain_ft': summary.avg_elevation_gain_ft,
+        'max_distance_miles': summary.max_distance_miles,
         'max_duration_minutes': summary.max_duration_minutes,
-        'max_elevation_gain_m': summary.max_elevation_gain_m,
+        'max_elevation_gain_ft': summary.max_elevation_gain_ft,
         'years_active': years_active,
         'first_ride_date': first_ride.strftime("%Y-%m-%d"),
         'last_ride_date': last_ride.strftime("%Y-%m-%d"),
         'avg_heart_rate': avg_heart_rate,
-        'workouts_with_elevation': len([w for w in workouts if w.elevation_gain_m is not None]),
+        'workouts_with_elevation': len([w for w in workouts if w.elevation_gain_ft is not None]),
         'workouts_with_hr': len(workouts_with_hr)
     }

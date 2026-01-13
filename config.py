@@ -49,8 +49,8 @@ EXCEL_THEME_COLORS = {
 }
 
 # Unit preferences
-DISTANCE_UNIT = "km"  # "km" or "miles"
-ELEVATION_UNIT = "m"  # "m" or "ft"
+DISTANCE_UNIT = "miles"  # "km" or "miles"
+ELEVATION_UNIT = "ft"  # "m" or "ft"
 
 def get_output_filename():
     """Generate output filename with current date."""

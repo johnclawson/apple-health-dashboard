@@ -90,19 +90,19 @@ class ExcelGenerator:
         row = 3
         stats = [
             ("Total Rides", overall_stats['total_workouts'], ""),
-            ("Total Distance", overall_stats['total_distance_km'], "km"),
+            ("Total Distance", overall_stats['total_distance_miles'], "mi"),
             ("Total Time", overall_stats['total_duration_hours'], "hours"),
             ("Total Calories Burned", overall_stats['total_calories'], "kcal"),
-            ("Total Elevation Gain", overall_stats['total_elevation_gain_m'], "m"),
+            ("Total Elevation Gain", overall_stats['total_elevation_gain_ft'], "ft"),
             ("", "", ""),
-            ("Average Distance per Ride", overall_stats['avg_distance_km'], "km"),
+            ("Average Distance per Ride", overall_stats['avg_distance_miles'], "mi"),
             ("Average Duration per Ride", overall_stats['avg_duration_minutes'], "min"),
-            ("Average Speed", overall_stats['avg_speed_kmh'], "km/h"),
-            ("Average Elevation Gain", overall_stats['avg_elevation_gain_m'], "m"),
+            ("Average Speed", overall_stats['avg_speed_mph'], "mph"),
+            ("Average Elevation Gain", overall_stats['avg_elevation_gain_ft'], "ft"),
             ("", "", ""),
-            ("Longest Ride", overall_stats['max_distance_km'], "km"),
+            ("Longest Ride", overall_stats['max_distance_miles'], "mi"),
             ("Longest Duration", overall_stats['max_duration_minutes'], "min"),
-            ("Biggest Climb", overall_stats['max_elevation_gain_m'], "m"),
+            ("Biggest Climb", overall_stats['max_elevation_gain_ft'], "ft"),
             ("", "", ""),
             ("Years Active", overall_stats['years_active'], ""),
             ("First Ride", overall_stats['first_ride_date'], ""),
@@ -136,10 +136,10 @@ class ExcelGenerator:
         df = pd.DataFrame(yearly_trends)
 
         # Write headers
-        headers = ['Year', 'Total Rides', 'Total Distance (km)', 'Total Time (hrs)',
-                   'Total Calories', 'Total Elevation (m)', 'Avg Distance (km)',
-                   'Avg Duration (min)', 'Avg Speed (km/h)', 'Avg Elevation (m)',
-                   'Max Distance (km)', 'Max Elevation (m)']
+        headers = ['Year', 'Total Rides', 'Total Distance (mi)', 'Total Time (hrs)',
+                   'Total Calories', 'Total Elevation (ft)', 'Avg Distance (mi)',
+                   'Avg Duration (min)', 'Avg Speed (mph)', 'Avg Elevation (ft)',
+                   'Max Distance (mi)', 'Max Elevation (ft)']
 
         for col_idx, header in enumerate(headers, 1):
             sheet.cell(1, col_idx, header)
@@ -148,16 +148,16 @@ class ExcelGenerator:
         for row_idx, row_data in enumerate(yearly_trends, 2):
             sheet.cell(row_idx, 1, row_data['year'])
             sheet.cell(row_idx, 2, row_data['total_workouts'])
-            sheet.cell(row_idx, 3, round(row_data['total_distance_km'], 1))
+            sheet.cell(row_idx, 3, round(row_data['total_distance_miles'], 1))
             sheet.cell(row_idx, 4, round(row_data['total_duration_hours'], 1))
             sheet.cell(row_idx, 5, round(row_data['total_calories'], 0))
-            sheet.cell(row_idx, 6, round(row_data['total_elevation_gain_m'], 0))
-            sheet.cell(row_idx, 7, round(row_data['avg_distance_km'], 1))
+            sheet.cell(row_idx, 6, round(row_data['total_elevation_gain_ft'], 0))
+            sheet.cell(row_idx, 7, round(row_data['avg_distance_miles'], 1))
             sheet.cell(row_idx, 8, round(row_data['avg_duration_minutes'], 1))
-            sheet.cell(row_idx, 9, round(row_data['avg_speed_kmh'], 1))
-            sheet.cell(row_idx, 10, round(row_data['avg_elevation_gain_m'], 0))
-            sheet.cell(row_idx, 11, round(row_data['max_distance_km'], 1))
-            sheet.cell(row_idx, 12, round(row_data['max_elevation_gain_m'], 0))
+            sheet.cell(row_idx, 9, round(row_data['avg_speed_mph'], 1))
+            sheet.cell(row_idx, 10, round(row_data['avg_elevation_gain_ft'], 0))
+            sheet.cell(row_idx, 11, round(row_data['max_distance_miles'], 1))
+            sheet.cell(row_idx, 12, round(row_data['max_elevation_gain_ft'], 0))
 
         self._apply_header_style(sheet, 1)
         self._apply_alternating_rows(sheet, 2, len(yearly_trends) + 1)
@@ -172,7 +172,7 @@ class ExcelGenerator:
         chart = LineChart()
         chart.title = "Total Distance by Year"
         chart.style = 10
-        chart.y_axis.title = "Distance (km)"
+        chart.y_axis.title = "Distance (mi)"
         chart.x_axis.title = "Year"
 
         data = Reference(sheet, min_col=3, min_row=1, max_row=num_years + 1)
@@ -206,9 +206,9 @@ class ExcelGenerator:
         sheet = self.workbook.create_sheet("Monthly Activity")
 
         # Write headers
-        headers = ['Year', 'Month', 'Month Name', 'Total Rides', 'Total Distance (km)',
-                   'Total Time (hrs)', 'Total Calories', 'Total Elevation (m)',
-                   'Avg Distance (km)', 'Avg Speed (km/h)']
+        headers = ['Year', 'Month', 'Month Name', 'Total Rides', 'Total Distance (mi)',
+                   'Total Time (hrs)', 'Total Calories', 'Total Elevation (ft)',
+                   'Avg Distance (mi)', 'Avg Speed (mph)']
 
         for col_idx, header in enumerate(headers, 1):
             sheet.cell(1, col_idx, header)
@@ -219,12 +219,12 @@ class ExcelGenerator:
             sheet.cell(row_idx, 2, row_data['month'])
             sheet.cell(row_idx, 3, row_data['month_name'])
             sheet.cell(row_idx, 4, row_data['total_workouts'])
-            sheet.cell(row_idx, 5, round(row_data['total_distance_km'], 1))
+            sheet.cell(row_idx, 5, round(row_data['total_distance_miles'], 1))
             sheet.cell(row_idx, 6, round(row_data['total_duration_hours'], 1))
             sheet.cell(row_idx, 7, round(row_data['total_calories'], 0))
-            sheet.cell(row_idx, 8, round(row_data['total_elevation_gain_m'], 0))
-            sheet.cell(row_idx, 9, round(row_data['avg_distance_km'], 1))
-            sheet.cell(row_idx, 10, round(row_data['avg_speed_kmh'], 1))
+            sheet.cell(row_idx, 8, round(row_data['total_elevation_gain_ft'], 0))
+            sheet.cell(row_idx, 9, round(row_data['avg_distance_miles'], 1))
+            sheet.cell(row_idx, 10, round(row_data['avg_speed_mph'], 1))
 
         self._apply_header_style(sheet, 1)
         self._apply_alternating_rows(sheet, 2, len(monthly_trends) + 1)
@@ -238,7 +238,7 @@ class ExcelGenerator:
         chart = LineChart()
         chart.title = "Monthly Distance Trend"
         chart.style = 10
-        chart.y_axis.title = "Distance (km)"
+        chart.y_axis.title = "Distance (mi)"
         chart.x_axis.title = "Month"
 
         data = Reference(sheet, min_col=5, min_row=1, max_row=num_months + 1)
@@ -319,16 +319,16 @@ class ExcelGenerator:
         sheet['A1'] = "Elevation Gain by Year"
         sheet['A1'].font = Font(size=14, bold=True)
 
-        headers = ['Year', 'Total Elevation (m)', 'Avg Elevation per Ride (m)', 'Max Single Climb (m)']
+        headers = ['Year', 'Total Elevation (ft)', 'Avg Elevation per Ride (m)', 'Max Single Climb (m)']
         for col_idx, header in enumerate(headers, 1):
             sheet.cell(3, col_idx, header)
 
         row = 4
         for trend in yearly_trends:
             sheet.cell(row, 1, trend['year'])
-            sheet.cell(row, 2, round(trend['total_elevation_gain_m'], 0))
-            sheet.cell(row, 3, round(trend['avg_elevation_gain_m'], 0))
-            sheet.cell(row, 4, round(trend['max_elevation_gain_m'], 0))
+            sheet.cell(row, 2, round(trend['total_elevation_gain_ft'], 0))
+            sheet.cell(row, 3, round(trend['avg_elevation_gain_ft'], 0))
+            sheet.cell(row, 4, round(trend['max_elevation_gain_ft'], 0))
             row += 1
 
         self._apply_header_style(sheet, 3)
@@ -338,7 +338,7 @@ class ExcelGenerator:
         sheet[f'A{row + 2}'] = "Top 10 Biggest Climbs"
         sheet[f'A{row + 2}'].font = Font(size=14, bold=True)
 
-        headers = ['Date', 'Distance (km)', 'Elevation Gain (m)', 'Duration (min)', 'Source']
+        headers = ['Date', 'Distance (mi)', 'Elevation Gain (m)', 'Duration (min)', 'Source']
         header_row = row + 4
         for col_idx, header in enumerate(headers, 1):
             sheet.cell(header_row, col_idx, header)
@@ -346,8 +346,8 @@ class ExcelGenerator:
         data_row = header_row + 1
         for workout in top_climbs:
             sheet.cell(data_row, 1, workout.date_str)
-            sheet.cell(data_row, 2, round(workout.distance_km, 1))
-            sheet.cell(data_row, 3, round(workout.elevation_gain_m or 0, 0))
+            sheet.cell(data_row, 2, round(workout.distance_miles, 1))
+            sheet.cell(data_row, 3, round(workout.elevation_gain_ft or 0, 0))
             sheet.cell(data_row, 4, round(workout.duration_minutes, 0))
             sheet.cell(data_row, 5, workout.source_name)
             data_row += 1
@@ -364,7 +364,7 @@ class ExcelGenerator:
         chart = BarChart()
         chart.title = "Total Elevation Gain by Year"
         chart.style = 11
-        chart.y_axis.title = "Elevation (m)"
+        chart.y_axis.title = "Elevation (ft)"
         chart.x_axis.title = "Year"
 
         data = Reference(sheet, min_col=2, min_row=3, max_row=num_years + 3)
@@ -382,8 +382,8 @@ class ExcelGenerator:
         sheet = self.workbook.create_sheet("Raw Data")
 
         # Headers
-        headers = ['Date', 'Year', 'Month', 'Distance (km)', 'Duration (min)',
-                   'Avg Speed (km/h)', 'Calories', 'Elevation Gain (m)',
+        headers = ['Date', 'Year', 'Month', 'Distance (mi)', 'Duration (min)',
+                   'Avg Speed (mph)', 'Calories', 'Elevation Gain (m)',
                    'Avg HR (bpm)', 'Max HR (bpm)', 'Source', 'GPX File']
 
         for col_idx, header in enumerate(headers, 1):
@@ -394,11 +394,11 @@ class ExcelGenerator:
             sheet.cell(row_idx, 1, workout.date_str)
             sheet.cell(row_idx, 2, workout.year)
             sheet.cell(row_idx, 3, workout.month)
-            sheet.cell(row_idx, 4, round(workout.distance_km, 2))
+            sheet.cell(row_idx, 4, round(workout.distance_miles, 2))
             sheet.cell(row_idx, 5, round(workout.duration_minutes, 1))
-            sheet.cell(row_idx, 6, round(workout.avg_speed_kmh, 1))
+            sheet.cell(row_idx, 6, round(workout.avg_speed_mph, 1))
             sheet.cell(row_idx, 7, round(workout.calories, 0))
-            sheet.cell(row_idx, 8, round(workout.elevation_gain_m or 0, 0))
+            sheet.cell(row_idx, 8, round(workout.elevation_gain_ft or 0, 0))
             sheet.cell(row_idx, 9, round(workout.avg_heart_rate, 1) if workout.avg_heart_rate else "")
             sheet.cell(row_idx, 10, round(workout.max_heart_rate, 1) if workout.max_heart_rate else "")
             sheet.cell(row_idx, 11, workout.source_name)

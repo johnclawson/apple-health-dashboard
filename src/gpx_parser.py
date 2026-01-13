@@ -18,7 +18,7 @@ def parse_gpx_file(gpx_file: Path) -> Tuple[float, float, float]:
     Parse a GPX file and extract elevation metrics.
 
     Returns:
-        Tuple of (elevation_gain_m, elevation_loss_m, max_elevation_m)
+        Tuple of (elevation_gain_ft, elevation_loss_ft, max_elevation_ft)
     """
     try:
         with open(gpx_file, 'r') as f:
@@ -34,7 +34,8 @@ def parse_gpx_file(gpx_file: Path) -> Tuple[float, float, float]:
             for segment in track.segments:
                 for point in segment.points:
                     if point.elevation is not None:
-                        elevation = point.elevation
+                        # GPX stores elevation in meters, convert to feet
+                        elevation = point.elevation * 3.28084
 
                         # Track max elevation
                         if elevation > max_elevation:
@@ -164,9 +165,9 @@ def enrich_workouts_with_elevation(
 
             # Update workout
             workout.gpx_file = gpx_file.name
-            workout.elevation_gain_m = elevation_gain
-            workout.elevation_loss_m = elevation_loss
-            workout.max_elevation_m = max_elevation
+            workout.elevation_gain_ft = elevation_gain
+            workout.elevation_loss_ft = elevation_loss
+            workout.max_elevation_ft = max_elevation
 
             matched_count += 1
 

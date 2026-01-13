@@ -67,14 +67,14 @@ def extract_workouts(xml_file: Path, workout_types: List[str]) -> List[Workout]:
                         # Duration is already in minutes according to durationUnit="min"
                         duration = float(elem.get("duration"))
 
-                    # Extract distance (in km)
-                    distance_km = 0
+                    # Extract distance (in miles)
+                    distance_miles = 0
                     distance_unit = elem.get("distanceUnit", "")
                     if elem.get("totalDistance"):
-                        distance_km = float(elem.get("totalDistance"))
-                        # Convert miles to km if necessary
-                        if distance_unit == "mi":
-                            distance_km *= 1.60934
+                        distance_miles = float(elem.get("totalDistance"))
+                        # Convert km to miles if necessary
+                        if distance_unit == "km":
+                            distance_miles /= 1.60934
 
                     # Extract calories
                     calories = 0
@@ -89,7 +89,7 @@ def extract_workouts(xml_file: Path, workout_types: List[str]) -> List[Workout]:
                         start_date=start_date,
                         end_date=end_date,
                         duration_minutes=duration,
-                        distance_km=distance_km,
+                        distance_miles=distance_miles,
                         calories=calories,
                         source_name=source_name,
                         workout_type=workout_type
@@ -295,15 +295,15 @@ def extract_distance_and_calories(
                         elem.clear()
                         continue
 
-                    # Extract distance value (in km)
+                    # Extract distance value (in miles)
                     value = float(elem.get("value", 0))
                     unit = elem.get("unit", "")
 
-                    # Convert to km if necessary
-                    if unit == "mi":
-                        value *= 1.60934
+                    # Convert to miles if necessary
+                    if unit == "km":
+                        value /= 1.60934
                     elif unit == "m":
-                        value /= 1000.0
+                        value /= 1609.34  # meters to miles
 
                     distance_records[timestamp] = value
                     distance_count += 1
@@ -379,11 +379,11 @@ def enrich_workouts_with_distance_calories(
 
         # Only update if we found data (don't overwrite existing data with 0)
         if workout_distance > 0:
-            workout.distance_km = workout_distance
+            workout.distance_miles = workout_distance
         if workout_calories > 0:
             workout.calories = workout_calories
 
-    workouts_with_distance = sum(1 for w in workouts if w.distance_km > 0)
+    workouts_with_distance = sum(1 for w in workouts if w.distance_miles > 0)
     workouts_with_calories = sum(1 for w in workouts if w.calories > 0)
 
     logger.info(f"Matched distance data to {workouts_with_distance}/{len(workouts)} workouts")
