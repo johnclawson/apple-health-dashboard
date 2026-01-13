@@ -14,6 +14,18 @@ pip install -r requirements.txt
 
 # Run the full pipeline (processes Apple Health export → Excel report)
 python src/main.py
+
+# Run tests
+pytest tests/ -v
+
+# Run tests with coverage
+pytest tests/ --cov=src --cov-report=html
+
+# Run specific test class
+pytest tests/test_parser.py::TestExtractWorkouts -v
+
+# Run specific test
+pytest tests/test_parser.py::TestExtractWorkouts::test_extract_cycling_workouts -v
 ```
 
 The pipeline will:
@@ -172,3 +184,28 @@ The export.xml contains:
 - `<Workout>` elements: High-level workout metadata
 - `<Record>` elements: Granular time-series data
 - Record types used: `HKQuantityTypeIdentifierDistanceCycling`, `HKQuantityTypeIdentifierActiveEnergyBurned`, `HKQuantityTypeIdentifierHeartRate`
+
+## Testing
+
+The test suite covers all parser functions with 21 tests:
+
+**Test organization:**
+- `tests/test_parser.py`: Tests for all parsing functions
+- Uses pytest fixtures for sample XML data
+- Tests create temporary XML files to simulate Apple Health exports
+
+**Test coverage:**
+- `parse_datetime()`: Basic format, timezone handling, error cases
+- `extract_workouts()`: Workout extraction, unit conversion, type filtering
+- `extract_heart_rate_records()`: HR extraction, date filtering
+- `match_heart_rate_to_workouts()`: Matching logic, aggregation
+- `calculate_hr_zone_time()`: Zone calculation, edge cases
+- `extract_distance_and_calories()`: Record extraction, unit conversion
+- `enrich_workouts_with_distance_calories()`: Enrichment logic, timestamp matching
+
+**When adding new parser functions:**
+1. Create sample XML data as a pytest fixture
+2. Test the happy path with valid data
+3. Test edge cases (missing data, empty results, boundary conditions)
+4. Test unit conversions if applicable
+5. Use approximate comparisons for floating point values (`abs(actual - expected) < 0.01`)
